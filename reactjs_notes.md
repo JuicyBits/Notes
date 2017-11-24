@@ -1,6 +1,5 @@
+### Overview
 - React acts like an *agent* for the browser
-
-- Component names must start with a capital
 
 - React will update HTML Views in the DOM when the **State** of one of its **Components** changes
 
@@ -8,7 +7,6 @@
     - State changes modify the HTML Tree of the Virtual DOM first
     - This State change only changes the Tree hierarchy where necessary, rather than recreating the entire tree -- **Tree Reconciliation**
     - This new Virtual HTML Tree is then shared with the Browser's DOM
-
 
 - The `React` Library can be used without a Browser, the `ReactDOM` library is required for use with a Browser
     - `ReactDOM` contains the logic to convert virtual DOM to real DOM
@@ -19,16 +17,12 @@
 
 - React stores both the last DOM Version used by the browser and the latest DOM Version created by the Virtual DOM.  It compares the two and instructs the browser to only update the computed difference rather than the entire DOM node
 
-- All **Components** are reusable
-    - At their core, components are just vanilla JS functions
-
-**JSX**
+### JSX  
 - JSX is a JS extension that allows for the creation of XML style syntax to build React.createElement calls
 - Put JS expressions in '{}'
     - Expression means JS must return a value
     - JS Objects also count as expressions in JSX
     - Cannot use `if` statements, but `ternary operators` are ok
-
 
 ```
 // Wrong:
@@ -42,11 +36,11 @@ onClick={this.handleClick}
 - Props are external, passed down from Components higher in the hierarchy
 - Props cannot be changed internally
 
-**State**  
-- use `getInitialState()` to initialize the state of a Component
+### State
+- Any changes made to the `state` will cascade down to child components whose `props` values are derived from `state` props
 - use `this.setState()` to modify the state
 
-`ReactDOM.render(*virtual DOM element*, *existing DOM element)`
+`ReactDOM.render(*<Component />*, *Existing DOM element)`
 
 ### Writing Good Components
 **Typechecking with PropTypes**
@@ -91,6 +85,12 @@ Application.propTypes = {
 - Use `array.map` to create a list of JSX elements from an array of JavaScript values
     - Similar to a `foreach` loop
 
+### Components
+- All **Components** are reusable
+    - At their core, components are just vanilla JS functions
+
+- Component names must start with a capital
+
 **Stateless functional component**: A component defined as a function. It takes only props as an argument and returns a virtual DOM
 ```
 const Header = (props) => {
@@ -103,6 +103,15 @@ const Header = (props) => {
 ```
 
 **Component Class**: A component definition that can include things like state, helper methods and other advanced hooks into the page’s DOM
+```
+const Application extends React.Component{
+    render(){
+        return(
+            <div>...</div>
+        );
+    }
+}
+```
 
 ### Unidirectional Data Flow
 - Two main types of State:
@@ -112,6 +121,16 @@ const Header = (props) => {
 
 > "A component only knows about itself, the properties passed to it, and any child components it may have"
 
-**Be aware of binding issues when using `arrow functions`.  `This` within an arrow function has a different lexical scope**
+### Working with Forms in React
+- Working with Forms in React requires special consideration, since forms are inherently stateful
 
-**When writing Tables in React, include `tbody` and `thead` -- this is because the browser will automatically create these DOM elements if they are not present, causing discrepencies b/n the Virtual DOM and actual DOM trees**
+### Special Notes
+- **Be aware of binding issues when using `arrow functions`.  `This` within an arrow function has a different lexical scope**
+
+- **When writing Tables in React, include `tbody` and `thead` -- this is because the browser will automatically create these DOM elements if they are not present, causing discrepancies b/n the Virtual DOM and actual DOM trees**
+
+- Use `componentDidMount()` to hold code that should be executed when the component is successfully mounted to the DOM
+- Use `componentWillUnmount()` to hold cleanup code that should be executed when a module (component) is removed from the DOM
+
+- Use `$r` in console to view the top-level React component
+    - Use `$r.setState()` to alter the state
