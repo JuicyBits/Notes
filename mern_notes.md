@@ -8,6 +8,7 @@
 `bower init`  
 
 - Use `git grep "<keyword>"` in terminal to search for keywords in all (non-automatically generated) project files
+  - `git grep "<keyword>" | grep -v <keyword_2>` to search for keyword excluding `keyword_2`
 
 ## Node
 #### Importing modules
