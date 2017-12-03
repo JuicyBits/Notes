@@ -51,3 +51,61 @@
 - Manipulating Attributes
   - `getAttribute()`
   - `setAttribute()`
+
+- DOM Events
+  - *Process:* Select an element and add an **event listener**
+  - `element.addEventListener(type, callbackFunction)`
+
+### *Section 16:* Intro to jQuery
+> jQuery is a DOM Manipulation library, and the most popular Javascript library, period
+
+**Why use jQuery?**
+- Fix "broken" DOM API (old DOM)
+- Brevity and Clarity
+- Ease of use
+- Cross-Browser Support
+- AJAX
+- Popularity
+
+**Why NOT use jQuery?**
+- The DOM API is no longer "broken"
+- Does nothing you can't do without it
+- Unnecessary dependency
+- Performance
+- Lots are transitioning away from jQuery
+
+**Useful Methods**
+- `$().css()`
+- `val()`
+- `text()`
+- `attr()`
+- `html()`
+- `addClass()`
+- `removeClass()`
+- `toggleClass()`
+
+### *Section 17:* Advanced jQuery
+**jQuery Events**
+- `click()`
+- `keypress()`
+- `on()`
+  - **Most common** jQuery Event Method
+- Why use `On()`?
+  - `click()` only adds listeners for existing elements
+  - `on()` will add listeners for all potential future elements
+    - use `parentElement.on(eventType, child, callback())` to add event listeners to children that are appended dynamically-- add the listener to a parent that is always present on page load so the event can 'waterfall' to all children of type `child`
+
+**Effects**
+
+### *Section 19:* Patatap Clone
+**Libraries**
+- `Paper.js`
+- `Howler.js`
+
+- The HTML5 `canvas` element is used to create animations and graphics using javascript
+
+### *Section 21:* The Command Line
+- `rm` -> remove files
+- `rm -rf` -> remove entire directory (including child files / directories)
+
+### *Section 22:* Intro to Node

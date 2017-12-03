@@ -1,0 +1,1 @@
+- Arrow functions' `this` is determined by the **invocation**, but *not* by the enclosing context
