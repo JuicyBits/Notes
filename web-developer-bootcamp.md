@@ -109,3 +109,56 @@
 - `rm -rf` -> remove entire directory (including child files / directories)
 
 ### *Section 22:* Intro to Node
+- Use `node *filename.js*` to execute Javascript with node
+- The `faker` NPM package is useful for creating dummy data
+
+### *Section 23:* Server Side Frameworks
+**Libraries vs. Frameworks**
+> The most important difference between a Library and Framework is *Inversion of Control*
+
+- You call a library, a framework calls *you*
+- Frameworks make decisions for you (basic scaffolding), with predetermined 'white spots' that you fill out (think *MadLibs*)
+
+**Popular frameworks**
+- `Express` for `Node`
+- `RubyOnRails` for `Ruby`
+- `Flask` for `Python`
+
+**Why Express?**
+- Lightweight framework (hides less from the user than heavyweight frameworks like `Rails`)
+> Fast, unopinionated, minimalist Web framework for **Node.js**
+
+- Unopinionated = flexible
+
+- Route order matters
+- **DRY** - **D**on't **R**epeat **Y**ourself
+
+**Route Parameters**
+- `app.get('/table/:id')`
+  - Match a route with `/table/*anything*`
+
+### *Section 24:* Intermediate Express
+**EJS** - **E**mbedded **J**ava**S**cript
+**EJS Control Flow**
+
+### *Section 25:* Working With APIs *Connecting with other applications*
+**A**pplication **P**rogram(ing) **I**nterface
+- Interfaces for code/computers to talk to one another
+
+**Web APIs**
+`ifttt.com` -> If This, Then That
+  - Connect multiple APIs
+`programmableweb.com` -> API library
+
+- Most commonly, Web APIs send `JSON` or `XML` data
+
+`request`
+- NPM package for making HTTP calls from Node
+
+**Status Codes**
+- `200` -> OK
+- `404` -> Not found
+
+`%20` -> URL encoded version of `' '`
+
+`JSON.parse(*data*)` -> parse string as JSON
