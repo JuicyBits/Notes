@@ -196,11 +196,23 @@ let schema = new mongoose.Schema({
 - Define a new schema
 
 `let VAR = mongoose.model('singularCollectionName', schema);`
-- Model an object for document instancing 
+- Model an object for document instancing
 
-| NAME | URL | VERB | DESCRIPTION |
+
+### *Section 29:* RESTful Routing
+`REST` - **RE**presentational **S**tate **T**ransfer**
+  - A mapping between HTTP routes and CRUD functionality
+  - A pattern for defining routes
+
+| Name | Path | HTTP Verb | Purpose |
 |-----|----|-----|------|
-| INDEX | /dogs | GET| Display a list of all dogs |
-| NEW | /dogs/new | GET | Displays form to make a new dog |
-| CREATE | /dogs | POST | Add a new dog to DB |
-| SHOW | /dogs/:id | GET | Shows info about one dog |
+| Index | /dogs | GET| Display a list of all dogs |
+| New   | /dogs/new | GET | Displays form to make a new dog |
+| Create | /dogs | POST | Add a new dog to DB |
+| Show  | /dogs/:id | GET | Shows info about one dog |
+| Edit  | /dogs/:id/edit | GET | Show edit form for one dog |
+| Update | /dogs/:id | PUT | Update a particular dog, then redirect somewhere |
+| Destroy | /dogs/:id | DELETE | Delete a particular dog, then redirect somewhere |
+
+**Useful Libraries**
+- `MomentJS`
