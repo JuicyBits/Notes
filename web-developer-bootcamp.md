@@ -162,3 +162,45 @@
 `%20` -> URL encoded version of `' '`
 
 `JSON.parse(*data*)` -> parse string as JSON
+
+### *Section 27:* Databases
+**SQL vs. NoSQL**
+- Rigid vs. flexible
+- Tabular data vs. BSON data
+
+- Default `Mongo` port: **27017**
+
+**Mongo Shell Basics**
+- `insert`
+  - `db.*collection*.insert({key: 'value', key: 'value'})`
+- `find`
+- `update`
+  - `db.*collection*.update({*existing key: 'value'*}, {$set: {*new key: 'value'*}})`
+    - Update an entry without overwriting its existing properties
+- `remove`
+  - `db.*collection*.remove({*key: 'value'}).limit(3)`
+    - Remove 3 entries matching the provided key/value
+
+**Mongoose**
+> Elegant `mongodb` modeling for `node.js`
+
+- `Mongoose` is an `ODM` - **O**bject **D**ata **M**apper**
+
+```
+let schema = new mongoose.Schema({
+  key: dataType,
+  key: dataType,
+  key: dataType
+});
+```
+- Define a new schema
+
+`let VAR = mongoose.model('singularCollectionName', schema);`
+- Model an object for document instancing 
+
+| NAME | URL | VERB | DESCRIPTION |
+|-----|----|-----|------|
+| INDEX | /dogs | GET| Display a list of all dogs |
+| NEW | /dogs/new | GET | Displays form to make a new dog |
+| CREATE | /dogs | POST | Add a new dog to DB |
+| SHOW | /dogs/:id | GET | Shows info about one dog |
