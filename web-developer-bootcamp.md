@@ -216,3 +216,10 @@ let schema = new mongoose.Schema({
 
 **Useful Libraries**
 - `MomentJS`
+
+**More on HTML Forms**
+- Currently, HTML Forms only support `POST` and `GET` requests (`POST` will default as `GET`)
+  - `GET` and `PUT` requests will add a query string with all form data to URL
+  - Workaround?  `method override`
+    - Add `?_method=PUT` to end of query string to override request type
+    - **Must install `method-override` package**
