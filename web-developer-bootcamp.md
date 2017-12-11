@@ -223,3 +223,55 @@ let schema = new mongoose.Schema({
   - Workaround?  `method override`
     - Add `?_method=PUT` to end of query string to override request type
     - **Must install `method-override` package**
+
+**Sanitizing User Input**
+- Use `express-sanitizer` package
+- `app.use(expressSanitizer());`
+- `req.body.*content* = req.sanitize(req.body.*content*);`
+
+### *Section 30:* Data Associations
+**Embedded Data**
+- Store `1` side data of a `1:M` relationship on the `M` side within an array property
+
+**Object References**
+- Rather than storing embedded data in an array on the `M` side, store a reference to that data (ID, primary key) that lives in another collection
+
+**Promise Deprecation Error**
+`(node:3341) DeprecationWarning: Mongoose: mpromise (mongoose's default promise library) is deprecated, plug in your own promise library instead: http://mongoosejs.com/docs/promises.html`
+- Fix with `mongoose.Promise = global.Promise;` before calling `mongoose.connect`
+
+### *Section 31:*
+**Nested Routes**
+`/campgrounds/:id/comments/new`
+ - The nested `comments` route appears after the campground route, as it is dependent on the `id` to link the comment with a particular campground instance
+
+### *Section 32:* Intro to Authentication with Passport
+**What tools are we using?**
+- Passport
+- Passport Local
+- Passport Local Mongoose
+- Express-Session
+
+**Useful Passport Methods**
+- `req.isAuthenticated()`
+- `req.logout()`
+
+`app.get('/*path*/', *middleware function*, (req, res) => {})`
+  - Middleware function is called before request is even parsed
+  - Remember to `return next();` in middleware to continue to next event
+
+### *Section 32:* Manual Authentication
+**Useful Passport Local / Passport Local Mongoose Methods**
+- `*MODEL*.register(*object*, *password*, (err, *inserted object*) => {})`
+- `passport.authenticate(*strategy*, {
+  successRedirect: *redirect path*,
+  failureRedirect *failure path*
+  })`
+
+**REMEMBER:** POST requests and other HTTP Methods can be sent without access to forms (using products like `Postman`)
+
+### *Section 35:* YelpCamp: Update and Destroy
+- Use Mongoose's `.equals()` method to compare an `ObjectID` as a string
+- Use `res.locals.*property name*` to make properties accessible to template engines
+**Error-Driven Development**
+- Write the code you *want* to work, fix errors as they come
