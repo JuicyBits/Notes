@@ -275,3 +275,62 @@ let schema = new mongoose.Schema({
 - Use `res.locals.*property name*` to make properties accessible to template engines
 **Error-Driven Development**
 - Write the code you *want* to work, fix errors as they come
+
+**Requiring directories and index.js**
+- When `require(*directory*)` is used with no extension, `index.js` will be used automatically (no need for `require(*directory*/index.js)`)
+
+### *Section 36:* YelpCamp: UI Improvements
+**Connect Flash**
+- Package used to display alerts and information to end users
+- `req.flash(*key*, *value*)`
+  - Determines which flash messages appear on the **next** request
+
+- `modernizr` is a Javascript library for making HTML, CSS, and JS features compatible for all browser types
+
+- Want to vertically align content?
+  - Instead of `translate` in CSS, try `align-top: 40vh`
+  - `vh` = View Height
+
+### *Section 37:* Git and Github
+`git init`
+- Initialize git repo
+`git status`
+`git add`
+- Add a file to track (git doesn't automatically track all files in a repo)
+`git add .`
+  - Add all changed / untracked files to stage for commit
+`git commit -m ""`
+- Commit files with message (*use present tense*)
+`git log`
+- View history of git commits
+`git checkout`
+  - `git checkout master`
+  - `git checkout *commit hash*`
+```
+git revert --no-commit *commit hash..head
+git commit
+```
+  - Revert to a previous commit and move the head to that commit
+
+### *Section 38:* Deploying with Heroku
+`heroku create`
+  - Create a new Heroku app
+`git push heroku master`
+  - Push master branch to heroku
+`heroku logs`
+  - View error logs
+
+Heroku automatically installs the latest dependencies (based on `package.json`) before running `start` script
+
+**Run heroku terminal commands from local terminal**
+- `Heroku run *command*`
+
+**Deploying YelpCamp with mLab**
+- mLab is a `DBaaS` (Database as a Service)
+
+**Environment Variables**
+- Not a node specific concept
+- Variables particular to server instance
+- Hidden
+- Useful for creating distinct variables for production / dev environments (IP, PORT, DB URL, etc...)
+- `process.env.*variable*`
