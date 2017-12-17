@@ -237,7 +237,9 @@ let schema = new mongoose.Schema({
 - Rather than storing embedded data in an array on the `M` side, store a reference to that data (ID, primary key) that lives in another collection
 
 **Promise Deprecation Error**
-`(node:3341) DeprecationWarning: Mongoose: mpromise (mongoose's default promise library) is deprecated, plug in your own promise library instead: http://mongoosejs.com/docs/promises.html`
+```
+(node:3341) DeprecationWarning: Mongoose: mpromise (mongoose's default promise library) is deprecated, plug in your own promise library instead: http://mongoosejs.com/docs/promises.html
+```
 - Fix with `mongoose.Promise = global.Promise;` before calling `mongoose.connect`
 
 ### *Section 31:*
@@ -334,3 +336,10 @@ Heroku automatically installs the latest dependencies (based on `package.json`) 
 - Hidden
 - Useful for creating distinct variables for production / dev environments (IP, PORT, DB URL, etc...)
 - `process.env.*variable*`
+
+### Adding User Authentication
+- The `locus` package can be used for debugging
+  - `eval(require('locus'))`
+
+### Fuzzy Searching
+- Use `req.query` to access query string data from GET requests
