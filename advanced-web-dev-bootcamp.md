@@ -156,6 +156,7 @@
 - Main Axis
 - Cross Axis
 
+#### Container Properties
 **flex-direction** - Defines the *main axis* and its *direction* (specify how items are placed in the flex container)
 
 `flex-direction: row;`
@@ -205,3 +206,156 @@
 **CSS @media rule**
 - used to define different style rules for different media types/devices
 `@media screen and (max-width: 500px){}`
+
+#### Flex Item Properties
+**align-self**
+- Override align-items on individual flex items
+`flex-start`
+`flex-end`
+`stretch`
+`center`
+
+**order**
+- specify the order used to lay out item in their flex container
+- All items have a default order of 0;
+
+**flex**
+- define how a flex item will grow or shrink to fit the available space in a container
+- *actually a shorthand property for 3 other properties:*
+  - `flex-grow`
+  - `flex-shrink`
+  - `flex-basis`
+`flex: <flex-grow> <flex-shrink> <flex-basis>`
+
+**flex-basis**
+- specifies the ideal size of a flex item *BEFORE* it's placed into a flex container
+
+**flex-grow**
+- Dictate how the unused space should be spread amongst flex items
+- Determined by *ratios*
+`flex-grow: 0;`
+  - Default value
+
+**flex-shrink**
+- Dictate how items should shrink when there isn't enough space in container
+- Different space distribution formula than `flex-grow`
+`flex-shrink: 1;`
+  - Default value
+
+#### Browser support
+`caniuse.com`
+`autoprefixer.github.io`
+
+### Project: Building A Startup Site
+**Advanced CSS Properties**
+`background-clip`
+`background-size`
+`background-position`
+`box-sizing: border-box;`
+
+### Async Foundations
+#### Callback Functions
+- A function that is passed into another function as a parameter, than invoked by the parent function
+```
+function callback() {
+  console.log('Coming from callback');
+}
+
+function higherOrder(fn) {
+  console.log('About to call callback');
+  fn();
+  console.log('Callback has been invoked');
+}
+
+higherOrder(callback);
+```
+
+**Higher Order Function** - A function that accepts a callback as a parameter
+
+**What are callbacks used for?**
+- Very common JS pattern
+- Advanced Array Methods
+- Browser events
+- AJAX Requests
+- React Development
+
+**Code Reuse with Callbacks**
+```
+function sendMessage(message, callback) {
+  return callback(message);
+}
+
+sendMessage('message for console', console.log);
+
+sendMessage('Message for alert', alert);
+```
+
+**Callbacks with Anonymous Functions**
+```
+function sendMessage(name, formatter) {
+  return 'Hello, ' + formatter(name);
+}
+
+sendMessage('Matt', function(name){
+  return name.toUpperCase();
+});
+```
+
+**forEach Function Definition**
+```
+function forEach(array, callback) {
+  // ...
+}
+
+// Callback signature
+function callback(curElement, currentIndex, array) {}
+```
+
+**findIndex function**
+- Returns the index of the first element in the array for which the callback returns a truthy value.  `-1` is returned if the callback never returns a truthy value
+
+**The Stack and the Heap**
+**What is the Stack**
+- An ordered data structure
+- Keeps track of function invocations
+- part of the JavaScript runtime (you don't access it directly)
+
+**How your code changes the Stack**
+- When you invoke a function, the detains of the invocation are saved to the top of the stack
+- Whenever a function returns, the information about the invocation is taken off the top of the stack (popped off the top)
+
+**Stack Frame**
+- Keeps track of:
+  - The function that was invoked
+  - The parameters that were passed to the Function
+  - Current line number
+
+**Stack Definition**
+- An stack set of stack frames
+- Most recently invoked function is on top of the stack
+- The bottom of the stack is the first function invoked
+- The stack is processed from top to bottom
+
+**Heap**
+- An area in memory where your data is stored
+
+`var obj = {firstName: 'Miller', lastName: 'Anderson'};`
+- The object is created in the heap.  obj is a reference to the object
+
+`var referenceCopy = obj;`
+- New data is not created, only a copy of the reference
+
+```
+var obj = {firstName: 'Miller', lastName: 'Anderson'};
+var ref = obj;
+
+ref.firstName = 'Matthew';
+```
+`console.log(obj.firstName)` -> prints `Matthew`
+
+**setTimeout and setInterval**
+**setTimeout** - a function that asynchronously invokes a callback after a delay in milliseconds
+- Cleared with `clearTimeout(<timeoutId>)`
+
+**setInterval** - a function that continually invokes a callback after every `x` milliseconds
+- Cleared with `clearInterval(<intervalId)`
