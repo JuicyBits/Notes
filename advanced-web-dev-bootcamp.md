@@ -761,7 +761,7 @@ describe('#getUserInfo', function(){
 5. Repeat
 
 **BDD - Behavior Driven Development**
-- Subset of **TDD**
+- Subs et of **TDD**
 - Involves being verbose with our style and describing the behavior of the functionality
 - Helpful when testing the design of the software
 
@@ -769,3 +769,318 @@ describe('#getUserInfo', function(){
 - **Integration Tests** - Test multiple units and how they function / behave together
 - **Acceptance Tests** - Test whether entire application satisfies a provided spec
 - **Stress Test** - Test application effectiveness under stressful / unideal circumstances
+
+### *Section 10:* Advanced Array Methods
+`forEach`
+- Iterates through an array
+- Runs a callback function on each value in the array
+- Returns `undefined`
+
+`map`
+- creates a new array
+- iterates through an array
+- runs a callback function for each value in the array
+- adds the result of that callback function to the new array
+- Returns the new array
+- NOTE: the new array is always the same length as that which invoked `map`
+
+`filter`
+- creates a new Array
+- iterates through an array
+- runs a callback function on each value in the Array
+- if the callback function returns true, that value will be added to the new array
+- If the callback function returns false, that value will be ignored from the new array
+
+`some`
+- iterates through an array
+- runs a callback on each value in the array
+- if the callback returns true for at least one value, return true
+- otherwise return false
+
+`every`
+- iterates through an array
+-runs a callback on each value in the array
+- if the callback returns false for any value, return false
+- otherwise, return true
+
+`reduce`
+- accepts a callback function and an optional second parameter
+- iterates through an array
+- runs a callback on each value in the array
+- the first parameter to the callback is either the first value in the array or the optional second parameter
+- The first value to the callback is often called the `accumulator`
+- The returned value from the callback becomes the new value of the accumulator
+
+### *Section 11:* Closures and the Keyword 'This'
+#### Closures
+- A function that makes use of variables defined in outer functions that have previously returned
+- Inner functions only store reference to outer functions variables that are needed within the inner function:
+- Closures are useful to simulate private variables
+
+```
+function outer(){
+  var a = 'foo';
+  var b = 'bar';
+  return function inner(){
+    console.log(a);
+  }
+}
+```
+
+#### This
+- Usually determined by the execution context (how a function is called)
+- `This` is defined when a function is run
+- Can be determined with four rules:
+  1. Global
+  - Object/Implicit
+  - Explicit
+  - New
+
+**Implicit/Object**
+- When the keyword `this` is inside of a declared object, `this` refers to the nearest parent object
+
+**Explicit Binding**
+- `call`
+- `apply`
+- `bind`
+  - Unlike `call` and `apply`, `bind` does not immediately invoke the function it is bound to
+
+### *Section 12:* Object Oriented Programming with JavaScript
+#### The 'New' keyword
+- Creates an empty object
+- Sets the keyword `this` to be that empty object
+- Adds the line `return this` to the end of the function which follows it
+- Adds a property onto the empty object `__proto__` which links the prototype property on the constructor function to the empty object
+
+#### Prototypes
+```
+function Person(name){
+  this.name = name;
+}
+
+var matt = new Person('Matt');
+matt.__proto__ === Person.prototype; // true
+```
+
+#### OOP Recap
+- Every time the new keyword is used, a link between the object created and the prototype property of the constructor is established --this link can be accessed using `__proto__`
+- The prototype object on the constructor contains a property called constructor which points back to the constructor
+- To share properties and methods for objects created by the constructor function, placing them in the prototype is the most efficient
+- To pass methods and properties from one prototype object to another, we c an use inheritance:
+  - Set the prototype property to be a newly created object using `Object.create` and resetting the constructor property
+
+### *Section 13:* Creating JSON API's with Node and Mongo
+#### Responding with JSON
+- `res.json({})`
+
+- `status(201)`
+  - Signify that new data was created in response to POST request
+
+### *Section 15:* ES2015 Part I
+#### Const
+- Create values that cannot be redeclared (constant)
+- `Const` objects an darrays can still be mutated, but not redeclared:
+```
+const arr = [1,2,3,4];
+arr.push(5);
+console.log(arr); // [1,2,3,4,5]
+arr = 'hello'; // error
+```
+
+#### Arrow Functions
+- Can place arrow functions on one line, but **must** omit the `return` keyword and `{}`:
+```
+var add = (a,b) => {
+  return a+b;
+}
+```
+becomes
+`var add = (a,b) => a+b;`
+
+- Arrow functions with only one parameter don't need `()`:
+`var fn = val => val*2;`
+
+- Not the same as regular functions:
+  - Don't get their own `this` keyword
+  - In an arrow function, the keyword `this` has its original meaning from the enclosing context (**the context of this directly after the arrow function**)
+
+- Arrow functions don't get their own keyword `arguments`
+
+- When **not** to use arrow functions
+  - Should never be used as methods in objects since we will get the incorrect value of the keyword `this`
+
+#### Default Parameters
+```
+function add(a=10, b=20){
+  return a+b;
+}
+
+add(); // 30
+add(20); // 40
+```
+
+#### For...of loops
+- Can't access an index
+- Can only be used with a `Symbol.iterator` method (no objects)
+```
+var arr = [1,2,3,4,5];
+
+for(let val of arr){
+  console.log(val);
+}
+```
+
+#### Rest
+- Always returns an array
+- Is called the rest operator only when it is a parameter to a function
+- Is accessed without the `...` in a function
+```
+function printRest(a,b,...c){
+  console.log(a);
+  console.log(b);
+  console.log(c);
+}
+printRest(1,2,3,4,5);
+
+// 1
+// 2
+// [3,4,5]
+```
+
+#### Spread
+- Used on arrays to spread each value out (as a comma separated value)
+- Useful when you have an array, but what you are working with expects comma separated values
+
+```
+var arr1 = [1,2,3];
+var arr2 = [4,5,6];
+var arr3 = [7,8,9];
+```
+ES5:
+`var combined = arr1.concat(arr2).concat(arr3);`
+ES6:
+`var combined = [...arr1, ...arr2, ...arr3];`
+
+**Spread instead of Apply**
+```
+var arr = [3,2,4,5,1];
+```
+`Math.max(arr);` // NaN
+ES5:
+`Math.max.apply(this,arr);` // 5
+ES6:
+`math.max(...arr)` // 5
+
+#### Object Enhancements
+**Object Shorthand Notation**
+```
+var fName = 'Miller';
+var lName = 'Anderson';
+
+var name = {
+  fName,
+  lName
+}
+```
+
+**Object Methods**
+ES5
+```
+var instructor = {
+  sayHello: function(){
+    return 'Hello!';
+  }
+}
+```
+ES6
+```
+var instructor = {
+  sayHello(){
+    return 'Hello!';
+  }
+}
+```
+
+**Computed Property Names**
+ES5
+```
+var firstName = 'Elie';
+var instructor = {};
+instructor[firstName] = 'That\'s me!'
+instructor.Elie; // 'That's Me!'
+```
+ES6
+```
+var firstName = 'Elie';
+var instructor = {
+  [firstName]: 'That's me!
+}
+instructor.Elie; // 'That's Me!''
+```
+
+#### Destructuring
+Extracting values from data stored in objects and arrays
+```
+var player = {
+  username: 'Miller420',
+  score: 420
+}
+var {username, score} = player;
+username; // 'Miller420'
+score; // 420
+```
+
+**Different Variables**
+```
+var instructor = {
+  firstName: 'Elie',
+  lastName: 'Schoppik'
+}
+var {firstName:first, lastName:last} = instructor;
+first; // 'Elie'
+last; // 'Schoppik'
+```
+
+**Array Destructuring**
+```
+var arr = [1,2,3];
+var [a,b,c] = arr;
+a; // 1
+b; // 2
+c; // 3
+```
+```
+function reverse([a,b]){
+  return [b,a];
+}
+reverse([1,2]); // [2,1]
+```
+
+### *Section 17:* ES2015 Part II
+#### The Class Keyword
+- A new reserved keyword provided by ES6
+- Creates a constant -- cannot be redeclared
+- Is an abstraction of constructor functions and prototypes (JS does not have built in support for OOP)
+- The `class` keyword **does not hoist**
+- Uses the `new` keyword to create objects
+
+ES5:
+```
+function Student(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+var matt = new Student('Matt', 'Anderson');
+```
+
+ES6:
+```
+class Student {
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+}
+
+var matt = new Student('Matt', 'Anderson');
+```
