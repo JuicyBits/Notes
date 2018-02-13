@@ -1084,3 +1084,409 @@ class Student {
 
 var matt = new Student('Matt', 'Anderson');
 ```
+
+#### ES6 Instance Methods
+ES5:
+```
+function Student(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+Student.prototype. sayHello = function(){
+  return 'Hello ' + this.firstName;
+}
+```
+
+ES6:
+```
+class Student {
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  sayHello(){
+    return `Hello ${this.firstName}`;
+  }
+}
+```
+- Placed inside the `class`
+- No `function` keyword
+- Under the hood, places methods on the prototype object
+
+#### Class Methods
+```
+class Student {
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  static isStudent(obj){
+    obj.constructor === Student;
+  }
+}
+```
+
+#### Inheritance
+- Passing methods and properties from one class to another
+ES5:
+```
+function Student(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+Student.prototype. sayHello = function(){
+  return 'Hello ' + this.firstName;
+}
+function Animal(name, type){
+  this.name = name;
+  this.type = type;
+}
+
+Animal.prototype = Object.create(Student.prototype);
+Animal.prototype.constructor = Animal
+```
+
+ES6:
+```
+class Student {
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+  sayHello(){
+    return `Hello ${this.firstName}`;
+  }
+}
+
+class Animal extends Student {
+
+}
+```
+
+#### Super
+ES5:
+```
+function Person(firstName, lastName){
+  this.firstName = firstName;
+  this.lastName = lastName;
+}
+function Student(){
+  Person.apply(this, arguments);
+}
+```
+
+ES6:
+```
+class Person {
+  constructor(firstName, lastName){
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+}
+
+class Student extends Person {
+  constructor(firstName, lastName){
+    super(firstName, lastName);
+  }
+}
+```
+- `super` can only be used if a method by the same name exists in the parent class (in this case, the parent class is `Person` and the method is `constructor`)
+
+#### Maps
+- AKA 'hash maps' in other languages
+- Similar to objects, but keys can be any data type
+- Created using the `new` keyword
+- New in `ES6`
+```
+var firstMap = new Map;
+firstMap.set(1, 'Matt');
+firstMap.set(false, 'a boolean');
+firstMap.set('neat', 'a string');
+firstMap.delete('neat');
+firstMap.size // 2
+```
+
+**Why use maps?**
+- Finding size is easy
+- Keys can be any data type
+- Prevents overwriting keys (unlike objects)
+
+**When to use a map**
+- Looking up keys dynamically (not hard coded strings)
+- If you need keys that are not strings
+- Frequently adding or removing key / value pairs
+- Operating on multiple keys at a time
+
+#### WeakMaps
+- Similar to map, but all keys must be objects
+- Values in a `WeakMap` can be cleared from memory if there is no reference to them
+- More performant than maps, but can not be iterated over
+
+#### Sets
+- All values in a set are unique
+- Any type of value can exist in a set
+- Created using the `new` keyword
+- New in `ES6`
+
+```
+var s = new Set;
+
+// can also be created from an array
+var s2 = new Set([3,1,4,1,2,1,5]) // {3,1,4,2,5}
+```
+```
+s.add(10);
+s.add(20);
+s.add(10); // {20, 10}
+
+s.size; // 2
+s.has(10); // true
+s.delete(20); // true
+s.size; // 1
+```
+
+#### WeakSet
+- Similar to a set, but all values MUST be objects
+- Values can be cleared from memory if there is no reference to them
+- More performant than sets but cannot be iterated over
+
+#### Promises
+- A one time guaranteed return of some future value
+- When that value is determined, that value is resolved/fulfilled or rejected
+- Friendly way to refactor callback code
+- Created using the `new` keyword
+- Every promise constructor accepts a callback function which contains two parameters, `resolve` and `reject` (most common names)
+- `resolve` and `reject` are both functions to be run if the promise is resolved or rejected
+
+**Promise.all**
+- Accepts an array of promises and resolves all of them or rejects once a single one of the promises has been first rejected (fail fast)
+- If all the passed-in promises fulfill, `Promise.all` is fulfilled with an array of values from the passed-in promises, in the same order as the promises passed in
+```
+function getMovie(title){
+  return $.getJSON(`https://omdbapi.com?t=${title}&apikey=thewdb`)
+}
+
+var titanicPromise = getMovie('titanic');
+var shrekPromise = getMovie('shrek');
+var braveheartPromise = getMovie('braveheart');
+
+Promise.all([titanicPromise, shrekPromise, braveheartPromise]).then(function(movies){
+  return movies.forEach(function(value){
+    console.log(value.Year);
+  });
+});
+
+// 1997
+// 2001
+// 1995
+```
+
+#### Generators
+- A special kind of function which cal pause execution and resume at any time
+- Created using a `*`
+- When invoked, a generator object is returned with the keys of `value` and `done`
+- `Value` is what is returned from the paused function using the `yield` keyword
+
+```
+function* printValues(){
+  yield 'First';
+  yield 'Second';
+  yield 'Third';
+}
+
+var g = printValues();
+g.next().value; // "First"
+g.next().value; // "Second"
+g.next().value; // "Third"
+```
+
+**Iterating over a generator**
+```
+function* pauseAndReturnValues(num){
+  for(let i = 0; i < num; i++){
+    yield i;
+  }
+}
+
+for(val of pauseAndReturnValues(3)){
+  console.log(val);
+}
+
+// 0
+// 1
+// 2
+```
+
+**Async Generators**
+```
+function* getMovieData(movieName){
+  console.log('starting');
+  yield $.getJSON(`https://omdbapi.com?t=${movieName}&apikey=thewdb`);
+  console.log('ending');
+}
+
+var movieGetter = getMovieData('titanic');
+movieGetter.next().value.then(val => console.log(val));
+```
+
+#### Object.assign
+```
+var o = {name: 'Miller'};
+var o2 = Object.assign({}, o);
+
+o2.name = 'Matt';
+o.name; // "Miller";
+```
+**Not a deep clone:**
+```
+var o = {
+  instructors: ['Elie', 'Tim']
+};
+var o2 = Object.assign({}, o);
+o2.push('colt');
+o.instructors; // ["Elie", "Tim", "Colt"];
+```
+
+#### Array.from
+- Convert other data types into arrays
+```
+var firstSet = new Set([1,2,3,4,3,2,1]);
+var arratFromSet = Array.from(firstSet);
+```
+
+#### Additional ES6 Methods
+`find`
+- Invoked on arrays
+- Returns the value found or `undefined` if not found
+
+`findIndex`
+- Returns an index or `-1` if the value is not found
+
+`includes`
+- returns a `boolean` if a value is in a string
+- Easier than using `indexOf`
+- Returns `-1` if value is not found
+
+`Number.isFinite`
+`every`
+
+### *Section 18:* ES2016 and ES2017
+`**`
+- Exponentiation operator
+`[].includes`
+`padStart`
+`padEnd`
+
+#### ES2017 Async Functions
+- A special kind of function that is created using the word `async`
+- Meant for writing asynchronous code, specifically `Promises`
+```
+async function first(){
+
+}
+first();
+first().then(val => console.log(val));  // "We did it!"
+```
+**Await**
+- A reserved keyword that can only be used inside `async` functions
+- Pauses the execution of the async function and is followed by a Promise
+- Waits for the promise to resolve and resumes the async function's execution and returns the resolved value
+- Think of a pause button (or yield with generators)
+```
+async function getMovieData(){
+  console.log('starting!');
+  var movieData = await $.getJSON(`https://omdbapi.com?t=titanic&apikey=thewdb`);
+  // this line does not run until the promise is resolved
+  console.log('all done!');
+  console.log(movieData);
+}
+```
+
+**Object async**
+- Can place async functions as methods inside objects
+
+**Handling errors**
+- If a promise is rejected using await, an error will be thrown
+- Can use `try/catch` statement to handle errors
+```
+async function getUser(user){
+  try {
+    var response = await $.getJSON(`https://api.github.com/users/${user}`);
+    console.log(response.name);
+  } catch(e) {
+    console.log('User does not exist');
+  }
+}
+```
+
+**Writing better code with async**
+```
+async function getMovieData(){
+  var titanicPromise = $.getJSON(`https://omdbapi.com?t=titanic&apikey=thewdb`);
+  var shrekPromise = $.getJSON(`https://omdbapi.com?t=shrek&apikey=thewdb`);
+
+  var titanicData = await titanicPromise;
+  var shrekData = await shrekPromise;
+
+  console.log(titanicData);
+  console.log(shrekData);
+}
+
+getMovieData();
+```
+- Start the HTTP requests in parallel and await their resolved promises, rather than awaiting requests sequentially via `await $.getJSON(`https://omdbapi.com?t=titanic&apikey=thewdb`);`
+
+**Await with Promise.all**
+```
+async function getMovieData(first, second){
+  var moviesList = await Promise.all([
+    $.getJSON(`https://omdbapi.com?t=${first}&apikey=thewdb`),
+    $.getJSON(`https://omdbapi.com?t=${second}&apikey=thewdb`)
+  ]);
+  console.log(moviesList[0].Year);
+  console.log(moviesList[1].Year);
+}
+
+getMovieData('shrek', 'blade');
+```
+
+#### Object Rest
+- Gather remaining (rest) of keys and values in an object  and create a new one out of them
+
+`var student = {first: 'Miller', last: 'Anderson', job: 'student', numSiblings: 5}`
+```
+var {first, last, ...data} = student;
+first; // "Miller"
+last; // "Anderson"
+data; // { job: 'Student', numSiblings: 3 }
+```
+
+#### Object Spread
+```
+var defaults = {job: 'Instructor', ownsCat: true, ownsDog: true};
+
+var miller = {...defaults, ownsCat: false};
+
+var colt = {...defaults, ownsDog: false};
+```
+
+### *Section 19:* D3 and the DOM
+**Data Driven Documents**
+
+### *Section 25:* Introduction to React and JSX
+#### Front-End Frameworks
+- JS libraries that handle DOM manipulation
+- Handles navigations (HTML5 push state)
+- State management
+
+#### JSX
+**Babel** - A transpiler
+**Transpiler** - converts from one source code version to another
+  - Will be used to convert `JSX` to `Vanilla JS`
+
+#### Create React App
+**Webpack** - A module bundler for modern JavaScript applications
+  - Combines different JS files into a `bundle.js`
+  - Has a plugin system to run tools like babel
+  - Also bundles other assets like `css`, `images`, etc
+  
