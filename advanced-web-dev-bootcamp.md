@@ -1489,4 +1489,142 @@ var colt = {...defaults, ownsDog: false};
   - Combines different JS files into a `bundle.js`
   - Has a plugin system to run tools like babel
   - Also bundles other assets like `css`, `images`, etc
-  
+
+`create-react-app {appname}`
+
+#### Javascript Import Statement
+- `Imports` within `{ }` are not default imports and must match the name within the `export` file
+
+#### Props
+- Props are **immutable**
+```
+class ShowText extends Component {
+  render() {
+    return <div>{this.props.text</div>
+  }
+}
+```
+`<ShowText text="This is a prop named text" />`
+
+**defaultProps**
+```
+class IngredientList extends Component {
+  static defaultProps = {
+    ingredients: []
+  };
+
+  render() {
+    return (
+      <ul>
+        {this.props.ingredients.map((ing, i) =>
+          <li key={i}>{ing}</li>
+        )}
+      </ul>
+    );
+  }
+}
+```
+
+**PropTypes**
+```
+import PropTypes from 'prop-types';
+
+class IngredientList extends Component {
+  static defaultProps = {
+    ingredients: PropTypes.arrayOf(PropTypes.string).isRequired
+  };
+
+  render() {
+    return (
+      <ul>
+        {this.props.ingredients.map((ing, i) =>
+          <li key={i}>{ing}</li>
+        )}
+      </ul>
+    );
+  }
+}
+```
+
+#### State
+- Stateful data that can change within an application
+```
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { favColor: 'red'};
+  }
+  render() {
+    return(
+      <div>
+        My favorite color is {this.state.favColor}
+      </div>
+    );
+  }
+}
+```
+- `setState`
+
+#### Pure Functions
+- A function with no side effects
+- Does not modify its inputs
+- Is repeatable (same inputs, same outputs)
+- All changes to `this.state` should be pure
+
+#### Component Architecture
+- `State` is always passed from a parent component down to a child component as a `prop`
+- State should not be passed to a sibling or a parent
+- Props don't change, but a component that inherited a parent's state as props can unmount and remount with the newly modified property
+- State should be owned by one component
+
+**setState**
+- Calls the render method when updated
+
+**Stateless Functional Component**
+```
+import React from 'react';
+
+const Greeting = props => (
+  <h1>Hello, {props.name}</h1>
+);
+
+export default Greeting;
+```
+
+#### Thinking in React
+- 1) Break the UI into a Component Hierarchy
+  - Draw boxes around every component and subcomponent in the mock and give them names
+  - What should be a component?  Follow the *single responsibility principle*, which dictates that ideally a component should only do one thing
+- 2) Build a Static Version in React
+  - Build a version that takes the `data model` and renders the UI with no interactivity
+  - **Don't use state at all yet**
+  - It's usually easier to build components using a *top-down* approach
+- 3) Identify the minimal (but complete) Representation of UI State
+  - The key here is **DRY** *(Don't Repeat Yourself)*
+  - Ask these questions to determine what is state:
+    - 1) Is it passed in from a parent via props?  Probably not state.
+    - 2) Does it remain unchanged over time?  Probably not state.
+    - 3) Can you compute it based on any other state or props in your component?  Probably not state.
+- 4) Identify Where Your State Should Live
+  - Identify every component that renders something based on state
+  - Find a common owner component (a single parent component housing both)
+  - Either the common owner or another component higher up in the hierarchy should own the state
+  - If none exists that makes sense to hold the state, create a new component meant simply for holding the state and add it somewhere in the hierarchy above the common owner component
+- 5) Add Inverse Data Flow
+
+#### setState Can Be Tricky
+**Rule:**  When a `setState` depends on previous state, use a function parameter:
+```
+this.setState((prevState, props) => {
+  return {
+    counter: prevState.counter + 1
+  };
+});
+```
+
+- `setState` is **asynchronous**, so use a callback function if necessary:
+```
+this.setState({name: 'Matt'}, () => {
+  console.log('State is up to date', this.state.name);
+});
+``
