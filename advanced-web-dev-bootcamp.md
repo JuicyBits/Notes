@@ -879,7 +879,7 @@ matt.__proto__ === Person.prototype; // true
 ### *Section 15:* ES2015 Part I
 #### Const
 - Create values that cannot be redeclared (constant)
-- `Const` objects an darrays can still be mutated, but not redeclared:
+- `Const` objects and arrays can still be mutated, but not redeclared:
 ```
 const arr = [1,2,3,4];
 arr.push(5);
@@ -1578,7 +1578,7 @@ class App extends Component {
 - State should be owned by one component
 
 **setState**
-- Calls the render method when updated
+- Calls the `render` method when updated
 
 **Stateless Functional Component**
 ```
@@ -1627,4 +1627,303 @@ this.setState((prevState, props) => {
 this.setState({name: 'Matt'}, () => {
   console.log('State is up to date', this.state.name);
 });
-``
+```
+
+### *Section 28:* The Virtual DOM, Events, and Forms
+#### Virtual DOM
+- A data structure stored by React that tracks changes from one render state to the next
+-  If something has changed from one render state to the next, the browser's DOM is updated (**reconciliation**)
+
+#### Synthetic Events
+- Supports all native browser events, but provides a consistent API on all browsers
+
+#### React 16 (Fiber) Features
+- Render can return an array of JSX elements or a string:
+```
+render() {
+  return [
+    <div key='a'>First Element</div>
+    <div key='b'>Second Element</div>
+  ]
+}
+```
+
+#### Events
+- Interaction in React is added directly to the component where the interaction should occur
+**onClick**
+```
+class ClickExample extends Component {
+  constructor(props){
+    super(props);
+    this.state = {name: 'miller'}
+  }
+  render() {
+    return (
+      <div>
+        <p>{this.state.name}</p>
+        <button type="button"
+          onClick={() => this.setState({name: 'MILLER'})}>
+          UPPERCASE
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+#### Forms
+- Use an `onSubmit` event for form submission, **NOT** `onClick` (browsers handle behavior differently)
+
+#### Refs
+- A direct reference to a DOM element
+
+**Use Cases**
+- Manage focus, text selection, or media playback
+- Triggering imperative animations
+- Integrating with third-party DOM libraries
+
+- Avoid `refs` when the job can be done with `React`
+
+#### React
+- Using the index of array elements as a key works only as long as elements in that array cannot be removed / modified
+
+### *Section 29:* Component Lifecycle Methods
+#### Mounting
+- `constructor()`
+- `componentWillMount()`
+  - Called when constructor has finished but component hasn't mounted (`render()` hasn't been called)
+- `render()`
+- `componentDidMount()`
+  - Occurs after components markup has been placed in the DOM
+
+#### Unmounting
+- `componentWillUnmount`
+
+#### Updating
+- `componentWillReceiveProps(nextProps)`
+  - Occurs whenever `setState()` is called
+- `shouldComponentUpdate(nextProps, nextState)`
+- `componentWillUpdate(nextProps, nextState)`
+- `render()`
+- `componentDidUpdate(prevProps, prevState)`
+- `forceUpdate(callback)`
+  - skips `shouldComponentUpdate` and forces a render (avoid in most cases)
+
+#### Examples
+**componentWillUnmount**
+```
+const NUM_BOXES = 32;
+
+class Boxes extends Component {
+  constructor(props) {
+    super(props);
+    const boxes = Array(NUM_BOXES).fill.map(this.getRandomColor, this);
+    this.state = {boxes};
+
+    this.intervalId = setInterval(() => {
+        const boxes = this.state.boxes.slice();
+        const ind = Math.floor(Math.random()*boxes.length);
+        boxes[ind] = this.getRandomColor();
+        this.setState({boxes});
+    }, 300)
+  }
+  componentWillUnmount(){
+    clearInterval(this.intervalId);
+  }
+}
+```
+
+### *Section 31:* Authentication
+#### One Way Hashing
+- Converting data into a fixed length has string
+- Can only recreate the hash if original data is known
+- Applicable for saving passwords on your server
+
+### JWT (JSON Web Token)
+- A web standard for storing signed data
+- Can use JWTs as proof that user has logged in before
+
+**Format**
+- Header
+- Payload
+- Signature
+
+- Client generates a **header** and **payload** for content they are requesting
+- Kept secure with **signature**, which is only generated server-side
+- Server inspects **header** to ensure it hasn't been tampered with, then inspects **payload** for a user ID / relevant information
+
+`jwt.io`
+
+- Since **signature** is generated from **header** and **payload**, tampering either on client-side will invalidate signature
+
+- **Secret Key** should be kept out of codebase, i.e. in `process.env.SECTET_KEY` to ensure only trusted eyes see key
+  - **Secret Key** is used to decode hashed messages (i.e. Token)
+
+#### Authentication vs Authorization
+- Just because you are who you say you are, you may not necessarily have permission to perform a certain action
+
+### *Section 32:* React Router
+#### HTML5 History Object
+- `history.back()`
+- `history.forward()`
+- `history.pushState({}, 'title', '/newpage')`
+
+- Changes the url address bar
+- Changes the browser's local navigation history
+- **Does not** cause the browser to make a `GET` request
+- What will we use it for?
+  - Browser back button, internal links, etc should all seem to behave like a page with server rendering
+  - Handling bookmarked react content
+
+#### React Router
+- Conditionally render React components based on URL and change URL
+- A library to manage routing in your single page application
+- A declarative API that uses components to make rendering decisions
+
+#### BrowserRouter vs HashRouter
+- BrowserRouter uses `history` object and makes changes to URL
+- HashRouter adds hashes to URL instead and does *not* use `history` object
+- BrowserRouter requires server support
+- HashRouter does not require server support
+
+#### React Router Setup
+`npm install --save react-router-dom`
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router} from 'react-router-dom'
+import App from './App';
+
+ReactDOM.render(
+    <Router>
+      <App />
+    </Router>,
+    document.getElementById('root');
+)
+```
+
+#### Switch and Route
+```
+import React, { Component } from 'react';
+import {
+  Switch, Route
+} from 'react-rouder-dom';
+
+const Homepage = () => (<div>HOMEPAGE</div>);
+const About = () => (<div>ABOUT</div>);
+
+const SwitchDemo = () => {
+  <Switch>
+    <Route path="/about" component={About} />
+    <Route path="/" component={Homepage} />
+  </Switch>
+}
+```
+  - `<Switch>` acts as an `if else` block for components
+
+#### Link
+```
+import React from 'react';
+import { Link } from 'react-router-dom';
+import SwitchDemo from './SwitchDemo';
+
+const App = () => (
+  <div>
+    <Link to="/">HOME</Link>
+    <Link to="/about">ABOUT</Link>
+    <div>
+      <SwitchDemo/>
+    </div>
+  </div>
+)
+```
+
+#### NavLink
+```
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import SwitchDemo from './SwitchDemo';
+
+const s={color: "red"};
+const App = () => (
+  <div>
+    <NavLink exact activeStyle={s} to="/">
+    HOME
+    </NavLink>
+    <NavLink exact activeStyle={s} to="/about">
+    ABOUT
+    </NavLink>
+    <div>
+      <SwitchDemo/>
+    </div>
+  </div>
+)
+```
+
+#### URL Parameters
+```
+import React, { Component } from 'react';
+import {
+  Switch, Route
+} from 'react-rouder-dom';
+
+const Homepage = () => (<div>HOMEPAGE</div>);
+const Name = ({match}) => (
+  <div>Hello, {match.params.name}</div>
+);
+
+const SwitchDemo = () => {
+  <Switch>
+    <Route path="/:name" component={Name} />
+    <Route path="/" component={Homepage} />
+  </Switch>
+}
+```
+
+#### Route Props
+- A component inside of a route gets 3 props:
+  1. **match** - info about how the url matches the route component
+  2. **location** - where you are now, similar to window.location
+  3. **history** - similar to HTML5 history object, allows explicit changes to the url
+
+#### withRouter
+- If a component is not rendered inside of a Route component, you can use `withRouter` to get route props
+```
+import {
+  withRouter, Switch, Route
+} from 'react-router-dom';
+
+const SwitchDemo = ({history}) => (
+  <div>
+    <Switch>
+    <Route path="/:name" component={Name}/>
+    <Route path="/" component={Homepage}/>
+    </Switch>
+    <button onClick={() => history.push('/')}>
+      Go Home
+    </button>
+  </div>
+);
+export default withRouter(SwitchDemo);
+```
+
+#### Render vs Component
+- Use `render` to pass custom props to your component
+- The route component can either use `render` *or* component (never both)
+```
+import { Route } from 'react-router-dom';
+const teachers = ['Tim', 'Colt', 'Matt', 'Elie'];
+const Teachers = ({teachers}) => (
+  <ul>
+    {teachers.map((teach, i) => (
+        <li key={i}>{teach}</li>
+    ))}
+  </ul>
+);
+
+const App = () => (
+    <Route path="/teachers" render={props => (
+        <Teachers {...props} teachers={teachers} />
+    )}/>
+);
+```
