@@ -1927,3 +1927,125 @@ const App = () => (
     )}/>
 );
 ```
+
+### *Section 33:* Redux
+- A popular state management library
+- Models the application state as a single JavaScript Object
+- Often used with React but does not depend on React  
+- `Redux` is synchronous  
+`npm install --save redux`
+
+#### Action
+- A plain JS object that must have a key called `type` and a string value:
+```
+{
+  type: "LOGOUT_USER"
+}
+```
+
+#### Reducer
+- A function that accepts the state and an action and returns a new state (entire state object)
+```
+function rootReducer(state={}, action) {
+  switch(action.type) {
+    case "LOGUOT_USER":
+      return {...state, login: false}
+    case "LOGIN_USER":
+      return {...state, login: true}
+    default:
+      return state;
+  }
+}
+```
+
+#### Creating a Store
+- Use the Redux `createStore` function which accepts the root reducer as a parameter
+`const store = Redux.createStore(rootReducer);`
+
+#### Changing the State
+- The only way to change the state is by calling dispatch:
+```
+const store = Redux.createStore(rootReducer);
+store.dispatch({type: "LOGIN_USER"});
+```
+
+#### Getting the State
+- Can get the state of the Redux store using `getState`
+`const newState = store.getState();`
+
+#### Listening for Changes
+```
+const changeCallback = () => {
+  console.log("State has changed", store.getState());
+}
+const unsubscribe = store.listen(changeCallback);
+```
+
+#### Redux State Change
+`Dispatch(action)` -> `reducer(currentState, action)` -> `newState` -> `Invoke Listeners (UI Changes)`
+
+### React with Redux
+#### React-Redux
+- A library to facilitate integrating `React` with `Redux`
+- Exposes a `Provider` component and a `connect` function
+- Handles:
+  - Listeners
+  - Passing in state to a component
+`npm install --save react-redux`
+
+#### Provider
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {Provider} from 'react-redux';
+import {createStore} from 'redux';
+import rootReducer from './reducers';
+
+const store = createStore(rootReducer);
+
+ReactDOM.render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    document.getElementById('root')
+);
+```
+
+#### Connect: Wrapping a Component
+```
+import React from 'react';
+import {connect} from 'react-redux';
+const BoldName = ({name}) => (
+    <strong>{name}</strong>
+);
+
+const mapStateToProps = state => (
+    { name: state.name }
+);
+
+export default connect(mapStateToProps, null)(BoldName);
+```
+
+#### Connect: Connecting Dispatch
+```
+import React from 'react';
+import {connect} from 'react-redux';
+
+const DelName = ({delName}) => (
+  <button type="button"
+    onClick={delName}>DELETE</button>
+);
+
+const mapDispatchToProps = (
+  dispatch, ownProps
+) => (
+  {
+    delName: () => (dispatch({
+      type: "DEL_NAME"
+    }))
+   }
+);
+
+export default
+  connect(null, mapDispatchToProps)(DelName);
+```
