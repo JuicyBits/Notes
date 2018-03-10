@@ -260,6 +260,12 @@ routes.MapRoute(
             public byte MembershipTypeId { get; set; }
         }
     ```
+- Requires `using System.ComponentModel.DataAnnotations;`
+**Data Annotations**
+- `[Display(Name = "[DISPLAY TEXT]")]`
+- `[Required]`
+- `[StringLength(255)]`
+
 
 #### Querying Objects
 - Controllers must have access to `DbContext`:
@@ -286,11 +292,20 @@ routes.MapRoute(
     - Use `var customers = _context.Customers.ToList();` to execute db query
 
 #### LINQ Extension Methods
-`_context.Movies.Where(m => m.GenreId == 1)`
-`_context.Movies.Single(m => m.Id == 1);`
-`_context.Movies.SingleOrDefault(m => m.Id == 1);`
-`_context.Movies.ToList();`
+- `_context.Movies.Where(m => m.GenreId == 1)`
+- `_context.Movies.Single(m => m.Id == 1);`
+- `_context.Movies.SingleOrDefault(m => m.Id == 1);`
+- `_context.Movies.ToList();`
 
 #### Eager Loading
 - When a `DbSet` is joined with another, Entity framework does not query linked DbSet by default -- solve with `Eager Loading`
 - `_context.Movies.Include(m => m.Genre);`
+- Requires `using System.Data.Entity;`
+
+### *Section 4:* Building Forms
+#### HTML Helper Methods
+- `Html.BeginForm`
+- `Html.LabelFor`
+- `Html.TextBoxFor`
+    - Inherits constraints from `model` (e.g. `StringLength`, `Required`)
+- `Html.CheckBoxFor`
