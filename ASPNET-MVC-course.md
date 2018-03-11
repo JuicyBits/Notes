@@ -417,7 +417,15 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
 
 ### Custom Validation
 1. Add a validation model
-    `Min18YearsIfAMember.cs`
+    ```
+    public class Min18YearsIfAMember : ValidationAttribute
+        {
+            protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+            {
+                if(valid) return ValidationResult.Success;
+                else return new ValidationResult("error message")
+            }
+    ```
 2. Add validation model as **Data Annotation**
     ```
     [Min18YearsIfAMember]
@@ -436,6 +444,9 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
 - *Not* enabled by default in `ASP.Net` applications
 - Must enable `jquery.validate` scripts
 - `ASP.NET Razor` recognizes default **Data Annotations**, *NOT* custom ones
+```
+@section scripts {                        @Scripts.Render(“~/bundles/jqueryval”)}  
+```
 
 ### Anti-forgery Tokens
 **CSRF**  
