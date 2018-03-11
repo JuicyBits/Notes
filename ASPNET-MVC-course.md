@@ -36,11 +36,11 @@
 - `ctrl + F5` -> Start without debugging
 - `F2` -> rename selected
 - `ctrl + m + m` -> collapse selected code block / html tag
-
+- When hovering over action name within a view (ReSharper): `Alt + Enter` -> `Create Action`
 #### Snippets
 - `prop` -> `public TYPE Type { get; set; }`
 - `ctor` -> create constructor
-
+- `mvcaction4` -> create action template
 
 #### Files
 - `App_Start` -> `BundleConfig.cs`
@@ -60,7 +60,7 @@
 **IEnumerable, ICollection, List**
 
 | Interface | Scenario |
-|------  -|--------|
+|-------|--------|
 |IEnumerable|You only want to iterate over the elements in a collection|
 |IEnumerable< T >|You only need read-only access to that collection|
 |ICollection|You want to modify the collection or you care about its size|
@@ -303,9 +303,73 @@ routes.MapRoute(
 - Requires `using System.Data.Entity;`
 
 ### *Section 4:* Building Forms
+#### Create Form
+```
+@using (Html.BeginForm("Save", "Customers"))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Name)
+        @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control" })
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+}
+```
+
 #### HTML Helper Methods
 - `Html.BeginForm`
 - `Html.LabelFor`
 - `Html.TextBoxFor`
     - Inherits constraints from `model` (e.g. `StringLength`, `Required`)
 - `Html.CheckBoxFor`
+- `Html.DropDownListFor`
+- `Html.HiddenFor`
+
+#### Model Binding
+- Use `[HttpPost]` before an action to handle `POST` requests
+```
+[HttpPost]
+    public ActionResult Create(Customer customer)
+    {
+        ...
+    }
+```
+
+#### Saving Data
+```
+_context.Customers.Add(customer);
+_context.SaveChanges();
+```
+- Changes to `_context` do not modify database until `.SaveChanges()`
+- When `.SaveChanges()` is called, `SQL` statements for all modifications to `_context` are generated and DB is modified
+
+#### Edit Form
+**Microsoft Suggests:**
+```
+var customerInDb = _context.Customers.Single(c => c.Id == customer.Id);
+TryUpdateModel(customerInDb);
+```
+- Issues with this approach:
+    - Security vulnerabilities.  What if user should not have permission to update **All** customer attributes?
+
+**Microsoft workaround:**
+```
+var customerInDb = _context.Customers.Single(c => c.Id == customer.Id);
+TryUpdateModel(customerInDb, "", new string[]{ "Name", "Email" });
+```
+- Why this is worse
+    - If attribute name changes, code breaks
+
+**Best Solution**
+```
+customerInDb.Name = customer.Name;
+customerInDb.Birthdate = customer.Birthdate;
+customerInDb.MembershipTypeId = customer.MembershipTypeId;
+customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
+```
+- Can be done automatically with `AutoMapper`
+    - Maps property names of source and target and maps them by convention
+    - `Mapper.Map(customer, customerInDb)`
+
+**Addressing Security Risk**
+- Can create a `dto` class (Data Transfer Object) with only 'update-safe' properties:
+    - `UpdateCustomerDto`
