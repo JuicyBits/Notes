@@ -37,6 +37,10 @@
 - `F2` -> rename selected
 - `ctrl + m + m` -> collapse selected code block / html tag
 - When hovering over action name within a view (ReSharper): `Alt + Enter` -> `Create Action`
+- `F9` -> Add breakpoint
+- `F5` -> Start with debugging
+- `Shift + F5` -> Quit debugging
+
 ### Snippets
 - `prop` -> `public TYPE Type { get; set; }`
 - `ctor` -> create constructor
@@ -50,6 +54,8 @@
 - Add `?` after argument data type to make it nullable:
     `public void functionName(int? intVar){}`
 - Write `C#` code within a `.cshtml` file by prefixing with an `@`
+- `0` is the default value for numeric properties
+- `(byte) varName` -> Cast variable as a `byte`
 
 | Function | Definition |
 |-------|---------|
@@ -80,13 +86,13 @@
 - Name `DbContext`s with a `_` prefix
 
 ### Misc
-- ASP.NET uses `bootstrap` by default as its front end framework
+- ASP.Net uses `bootstrap` by default as its front end framework
 - Use `bootswatch.com` for bootstrap templates
 - `Navigation Properties` allow for navigating between / linking multiple model types and objects together
 
 
 ##Course Layout
-- ASP.NET MVC Fundamentals
+- ASP.Net MVC Fundamentals
 - Entity Framework (Code-first)
 - Forms
 - Validation
@@ -97,7 +103,7 @@
 - Building a Feature Systematically
 - Deployment
 
-##  *Section 2:* ASP.NET MVC Fundamentals
+##  *Section 2:* ASP.Net MVC Fundamentals
 ### Action Results
 ```
 namespace Vidly.Controllers
@@ -223,11 +229,11 @@ routes.MapRoute(
 - Full versioning of database
 - Much easier to build an integration test db
 
-**CodeFirst Myths**  
+**CodeFirst Myths**    
 - Does not give you full control over the Database
 
 ### Code-first Migrations
-**Package Manager Console Commands**  
+**Package Manager Console Commands**    
 - `enable-migrations`
 - `add-migration [MIGRATION MODEL NAME]`
 - `add-migration [MIGRATION MODEL NAME] - force`
@@ -261,11 +267,18 @@ routes.MapRoute(
         }
     ```
 - Requires `using System.ComponentModel.DataAnnotations;`
-**Data Annotations**
+
+**Data Annotations**  
 - `[Display(Name = "[DISPLAY TEXT]")]`
 - `[Required]`
 - `[StringLength(255)]`
-
+- `[Range(1, 10)]`
+- `[Compare(["OtherProperty"])]`
+- `[Phone]`
+- `[EmailAddress]`
+- `[Url]`
+- `[RegularExpression("...")]`
+- Used for both server-side and client-side validation
 
 ### Querying Objects
 - Controllers must have access to `DbContext`:
@@ -323,6 +336,17 @@ routes.MapRoute(
 - `Html.CheckBoxFor`
 - `Html.DropDownListFor`
 - `Html.HiddenFor`
+- `Html.ValidationMessageFor`
+- `@Html.ValidationSummary()`
+- `@Html.AntiForgeryToken()`
+
+### Form Dropdowns
+```
+<div class="form-group">
+    @Html.LabelFor(m => m.Customer.MembershipTypeId, "MembershipType")
+    @Html.DropDownListFor(m => m.Customer.MembershipTypeId, new SelectList(Model.MembershipTypes, "Id", "MembershipTypeTitle"), "Select Membership Type", new { @class = "form-control" })
+</div>
+```
 
 ### Model Binding
 - Use `[HttpPost]` before an action to handle `POST` requests
@@ -343,7 +367,7 @@ _context.SaveChanges();
 - When `.SaveChanges()` is called, `SQL` statements for all modifications to `_context` are generated and DB is modified
 
 ### Edit Form
-**Microsoft Suggests:**
+**Microsoft Suggests**  
 ```
 var customerInDb = _context.Customers.Single(c => c.Id == customer.Id);
 TryUpdateModel(customerInDb);
@@ -351,7 +375,7 @@ TryUpdateModel(customerInDb);
 - Issues with this approach:
     - Security vulnerabilities.  What if user should not have permission to update **All** customer attributes?
 
-**Microsoft workaround:**
+**Microsoft Workaround**  
 ```
 var customerInDb = _context.Customers.Single(c => c.Id == customer.Id);
 TryUpdateModel(customerInDb, "", new string[]{ "Name", "Email" });
@@ -359,7 +383,7 @@ TryUpdateModel(customerInDb, "", new string[]{ "Name", "Email" });
 - Why this is worse
     - If attribute name changes, code breaks
 
-**Best Solution**
+**Best Solution**  
 ```
 customerInDb.Name = customer.Name;
 customerInDb.Birthdate = customer.Birthdate;
@@ -370,6 +394,56 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
     - Maps property names of source and target and maps them by convention
     - `Mapper.Map(customer, customerInDb)`
 
-**Addressing Security Risk**
+**Addressing Security Risk**  
 - Can create a `dto` class (Data Transfer Object) with only 'update-safe' properties:
     - `UpdateCustomerDto`
+
+##  *Section 5:* Validation
+### Adding Validation
+- `ASP.Net MVC` uses **Data Annotations** to validate **Action Parameters**
+- Use `ModelState` object to gain access to validation data
+
+**Steps**  
+1. Add **Data Annotations** to entities:
+    `[Required]`
+2. Use `ModelState.IsValid` to verify validity of form data
+3. Add validation messages to form:
+    `@Html.ValidationMessageFor(m => m.Customer.Name)`
+
+### Custom Validation Error Message
+- Has default messages based on **Data Annotations**
+- Can be overwritten:
+    `[Required(ErrorMessage = "Please enter customer's name.")]`
+
+### Custom Validation
+1. Add a validation model
+    `Min18YearsIfAMember.cs`
+2. Add validation model as **Data Annotation**
+    ```
+    [Min18YearsIfAMember]
+            public DateTime? Birthdate { get; set; }
+    ```
+
+### Validation Summary
+- `@Html.ValidationSummary()`
+- Displays summary of validation errors
+
+### Client-side Validation
+**Benefits**  
+- Immediate feedback
+- No waste of server-side resources
+
+- *Not* enabled by default in `ASP.Net` applications
+- Must enable `jquery.validate` scripts
+- `ASP.NET Razor` recognizes default **Data Annotations**, *NOT* custom ones
+
+### Anti-forgery Tokens
+**CSRF**  
+- Cross-site Request Forgery
+- Forged request to different web domain on behalf of user
+
+`@Html.AntiForgeryToken()`
+- Creates a token stored in form and user cookies (encrypted) and compares the two when `POST` request is made
+- Means user must be on form page to access hidden token field
+
+- Add `[ValidateAntiForgeryToken]` attribute to `action` along with `@Html.AntiForgeryToken()` in views
