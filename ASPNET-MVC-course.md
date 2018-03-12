@@ -490,7 +490,7 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
             public IHttpActionResult DeleteCustomer(int id) {}   
         }
     ```
-    
+
 - Api Actions with `Post` prefix are automatically configured to handle `POST` routes
     - However, avoid this convention when possible and stick to `[HttpPost]` decoration
 
@@ -510,9 +510,12 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
 4. Initialize mapper during application startup in `Application_Start()` function within `Global.asax.cs`:
     `Mapper.Initialize(c => c.AddProfile<MappingProfile>());`
 5. To map objects:
-    `var customerDto = Mapper.Map<Customer, CustomerDto>(customer);`
-    Or map to existing object:
-    `Mapper.Map(customer, customerDto)`
+    `var customerDto = Mapper.Map<Customer, CustomerDto>(customer);`  
+    Or map to existing object:  
+    `Mapper.Map(customer, customerDto)`  
+
+**To Ignore properties when mapping:**    
+`Mapper.CreateMap<Movie, MovieDto>().ForMember(m => m.Id, opt => opt.Ignore());`
 
 ### Using Camel Notation
 - In `App_Start/WebApiConfig.cs`:
@@ -525,8 +528,97 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
 ### IHttpActionResults
 - Allows for improved control over Http Responses (e.g., Sending a `201 Created` status code)
 
-**Helper Methods**
+**ApiController Helper Methods**
 - `NotFound()`
 - `Ok()`
 - `Created()`
 - `Unauthorized()`
+- `BadRequest()`
+
+##  *Section 7:* Client-side Development
+### Calling an API Using jQuery
+```
+$(document).ready(function() {
+            $("#customers").on("click", ".js-delete",
+                function () {
+                    bootbox.confirm("Are you sure you want to delete this customer?",
+                        (result) => {
+                            if (result) {
+                                $.ajax({
+                                    url: `/api/customers/${$(this).attr("data-customer-id")}`,
+                                    method: "DELETE",
+                                    success: () => {
+                                        $(this).parents("tr").remove();
+                                    }
+                                });
+                            }
+                        });
+                });
+        });
+```
+
+### Bootbox
+- An abstraction over `Bootstrap`
+
+### DataTables Plugin
+- A jQuery plugin for paginating, sorting, and filtering table data
+
+### DataTables - Zero Configuration
+`$("#customers").DataTable();`
+
+### DataTables with AJAX Source
+```
+$("#customers").DataTable({
+                ajax: {
+                    url: "/api/customers",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: (data, type, customer) => ("<a href='/customers/edit/" +
+                            customer.id +
+                            "'>" +
+                            customer.name +
+                            "</a>")
+                    },
+                    {
+                        data: "name",
+                    },
+                    {
+                        data: "id",
+                        render: (data) => ("<button class='btn-link js-delete' data-customer-id=" + data + ">Delete</button>")
+                    }
+                ]
+            });
+```
+
+### Hierarchical Data
+1. Create DTO for referenced domain model:
+    ```
+    public class MembershipTypeDto
+    {
+        public byte Id { get; set; }
+        public string MembershipTypeTitle { get; set; }
+    }
+    ```
+2. Update Mapping Profile:
+    `Mapper.CreateMap<MembershipType, MembershipTypeDto>();`
+3. Update ControllerAPI to include referenced model:
+    ```
+    var customerDtos = _context.Customers
+                    .Include(c => c.MembershipType)
+                    .ToList()
+                    .Select(Mapper.Map<Customer, CustomerDto>);
+    ```
+
+### DataTables: Removing Records
+```
+var table = $(...).DataTable(...);
+table.row($(this).parents("tr")).remove().draw();
+```
+
+### Single Page Applications
+**Benefits**
+- Smoother
+- Faster
