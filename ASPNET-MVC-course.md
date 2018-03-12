@@ -36,7 +36,7 @@
 - `ctrl + F5` -> Start without debugging
 - `F2` -> rename selected
 - `ctrl + m + m` -> collapse selected code block / html tag
-- When hovering over action name within a view (ReSharper): `Alt + Enter` -> `Create Action`
+- `Alt + Enter` -> access **ReSharper** shortcuts
 - `F9` -> Add breakpoint
 - `F5` -> Start with debugging
 - `Shift + F5` -> Quit debugging
@@ -86,13 +86,13 @@
 - Name `DbContext`s with a `_` prefix
 
 ### Misc
-- ASP.Net uses `bootstrap` by default as its front end framework
+- ASP.NET uses `bootstrap` by default as its front end framework
 - Use `bootswatch.com` for bootstrap templates
 - `Navigation Properties` allow for navigating between / linking multiple model types and objects together
 
 
 ##Course Layout
-- ASP.Net MVC Fundamentals
+- ASP.NET MVC Fundamentals
 - Entity Framework (Code-first)
 - Forms
 - Validation
@@ -103,7 +103,7 @@
 - Building a Feature Systematically
 - Deployment
 
-##  *Section 2:* ASP.Net MVC Fundamentals
+##  *Section 2:* ASP.NET MVC Fundamentals
 ### Action Results
 ```
 namespace Vidly.Controllers
@@ -336,6 +336,7 @@ routes.MapRoute(
 - `Html.CheckBoxFor`
 - `Html.DropDownListFor`
 - `Html.HiddenFor`
+- `Html.Hidden`
 - `Html.ValidationMessageFor`
 - `@Html.ValidationSummary()`
 - `@Html.AntiForgeryToken()`
@@ -400,7 +401,7 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
 
 ##  *Section 5:* Validation
 ### Adding Validation
-- `ASP.Net MVC` uses **Data Annotations** to validate **Action Parameters**
+- `ASP.NET MVC` uses **Data Annotations** to validate **Action Parameters**
 - Use `ModelState` object to gain access to validation data
 
 **Steps**  
@@ -441,11 +442,12 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
 - Immediate feedback
 - No waste of server-side resources
 
-- *Not* enabled by default in `ASP.Net` applications
+- *Not* enabled by default in `ASP.NET` applications
 - Must enable `jquery.validate` scripts
 - `ASP.NET Razor` recognizes default **Data Annotations**, *NOT* custom ones
 ```
-@section scripts {                        @Scripts.Render(“~/bundles/jqueryval”)}  
+@section scripts {                        
+@Scripts.Render(“~/bundles/jqueryval”)}  
 ```
 
 ### Anti-forgery Tokens
@@ -458,3 +460,73 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
 - Means user must be on form page to access hidden token field
 
 - Add `[ValidateAntiForgeryToken]` attribute to `action` along with `@Html.AntiForgeryToken()` in views
+
+##  *Section 6:* Building RESTful Services with ASP.NET Web API
+- `Razor Engine` generates markup on server-side and sends markup to client
+
+### Benefits of generating markup on client
+- Less server resources (improve scalability)
+- Less bandwidth (improves performance)
+- Support for a broad range of clients
+
+### RESTful Convention
+1. Create an ApiController:
+    ```
+    public class CustomersController : ApiController
+        {
+            // GET /api/customers
+            public IHttpActionResult GetCustomers() {}
+
+            // POST /api/customers
+            [HttpPost]
+            public IHttpActionResult CreateCustomer(CustomerDto customer) {}
+
+            // PUT /api/customers/{id}
+            [HttpPut]
+            public IHttpActionResult UpdateCustomer(int id, CustomerDto customer) {}
+
+            // DELETE /api/customers/{id}
+            [HttpDelete]
+            public IHttpActionResult DeleteCustomer(int id) {}   
+        }
+    ```
+    
+- Api Actions with `Post` prefix are automatically configured to handle `POST` routes
+    - However, avoid this convention when possible and stick to `[HttpPost]` decoration
+
+### Data Transfer Objects
+- APIs shouldn't send or receive domain objects
+    - As these objects change and grow with the application, chances of breaking APIs increase
+    - With direct access to domain objects, hackers can modify properties they should not have access to
+- DTOs allow for decoupling domain objects
+
+### AutoMapper
+- Maps properties between source and destination models based on property names (convention-based mapping tool)
+
+1. Install through `Package Manager Console`:
+    `install-package automapper`
+2. Create Dtos folter and Dto
+3. Add Mapping Profile class to `App_Start`
+4. Initialize mapper during application startup in `Application_Start()` function within `Global.asax.cs`:
+    `Mapper.Initialize(c => c.AddProfile<MappingProfile>());`
+5. To map objects:
+    `var customerDto = Mapper.Map<Customer, CustomerDto>(customer);`
+    Or map to existing object:
+    `Mapper.Map(customer, customerDto)`
+
+### Using Camel Notation
+- In `App_Start/WebApiConfig.cs`:
+    ```
+    var settings = config.Formatters.JsonFormatter.SerializerSettings;
+    settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+    settings.Formatting = Formatting.Indented;
+    ```
+
+### IHttpActionResults
+- Allows for improved control over Http Responses (e.g., Sending a `201 Created` status code)
+
+**Helper Methods**
+- `NotFound()`
+- `Ok()`
+- `Created()`
+- `Unauthorized()`
