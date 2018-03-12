@@ -605,6 +605,7 @@ $("#customers").DataTable({
 2. Update Mapping Profile:
     `Mapper.CreateMap<MembershipType, MembershipTypeDto>();`
 3. Update ControllerAPI to include referenced model:
+    `using System.Data.Entity;`
     ```
     var customerDtos = _context.Customers
                     .Include(c => c.MembershipType)
@@ -622,3 +623,14 @@ table.row($(this).parents("tr")).remove().draw();
 **Benefits**
 - Smoother
 - Faster
+
+##  *Section 8:* Authentication and Authorization
+- Done using `ASP.NET Identity` Framework
+
+### Authentication Options
+- No Authentication
+- Individual User Accounts
+- Organizational Accounts
+- Windows Authentication
+
+### ASP.Net Identity
