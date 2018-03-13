@@ -49,6 +49,8 @@
 ### Files
 - `App_Start` -> `BundleConfig.cs`
     - Defines various bundles and client side assets
+- `App_Start` -> `FilterConfig.cs`
+    - Handles global filters
 
 ### C# Syntax
 - Add `?` after argument data type to make it nullable:
@@ -62,6 +64,29 @@
 |`Enumerable.Any()`|Determines whether a sequence contains any elements.|
 |`Enumerable.SingleOrDefault()`|Returns the only element of a sequence that satisfies a specified condition or a default value if no such element exists; this method throws an exception if more than one element satisfies the condition.|
 
+### URL Encoded Characters
+|Character|Encoded|
+|-------|------|
+| backspace|%08|
+|tab|      %09|
+|linefeed| %0A|
+|creturn|  %0D|
+|space|    %20|
+|!     |  %21   |
+|"     |  %22   |
+|#     |  %23   |
+|$     |  %24   |
+|%     |  %25   |
+|&     |  %26   |
+|'     |  %27   |
+|(     |  %28   |
+|)     |  %29   |
+|*     |  %2A   |
+|+     |  %2B   |
+|,     |  %2C   |
+|-     |  %2D   |
+|.     |  %2E   |
+|/     |  %2F   |
 
 **IEnumerable, ICollection, List**
 
@@ -634,3 +659,106 @@ table.row($(this).parents("tr")).remove().draw();
 - Windows Authentication
 
 ### ASP.Net Identity
+**Domains**   
+- `IdentityUser`
+- `Role`
+
+**Api / Service**  
+- `UserManager`
+- `RoleManager`
+- `SignInManager`
+- ...
+
+**Persistence**  
+- `UserStore`
+- `RoleStore`
+
+### Restricting Access
+```
+[Authorize] // Action Attribute / Filter
+public ActionResult Index()
+{
+    ...
+}
+```
+- Can be applied to entire `controller`, or `globally` not just `actions`
+- Use `[AllowAnonymous]` on a `controller` or `action` to override higher-level filters
+
+### Seeding Users and Roles
+- *Best Practice:* Name user roles after actual permissions (i.e. `CanManageMovies` not `StoreManager`)
+
+**Creating a Manager Role**
+1. Create a new RoleStore
+    `var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());`
+2. Create a new RoleManager for that RoleStore:
+    `var roleManager = new RoleManager<IdentityRole>(roleStore);`
+3. Create a new Role within that RoleManager:
+    `await roleManager.CreateAsync(new IdentityRole("CanManageMovies"));`
+4. Add New user to that Role
+    `await UserManager.AddToRoleAsync(user.Id, "CanManageMovies");`
+
+**Seeding a DB with Guest and Admin Roles**
+1. Create a new migration called `SeedUsers` or some variation
+2. Run the following queries:
+    - Insert Guest user in `AspNetUsers` table
+    - Insert Admin user `AspNetUsers` table
+    - Insert Admin / Manager Role `AspNetRoles` table    
+    - Link Admin user and Role in `AspNetUserRoles` table   
+
+- Avoid using the `Seed` method of the configuration class to seed new users:
+    - This requires running `update-database` on production, as this is how `seed` method is called
+    - This requires changing connection string in `Web.config`, which is risky
+
+### Working with Roles
+- To prevent large nest of `if / else` blocks in views for tool access, often best practice is to create new views based on user roles:
+    ```
+    if (User.IsInRole("CanManageMovies"))
+        return View("List");
+    return View("readOnlyList");
+    ```
+
+- Apply `[Authorize(Roles = "ROLE NAME")]` to actions to override `global` filters and remedy security holes
+
+
+### User Filter Data Annotations
+- `[Authorized]`
+- `[Authorize(Roles = "ROLE NAME")]`
+- `[AllowAnonymous]`
+
+### Adding Profile Data
+1. Update `IdentityUser` model with new property
+    ```
+    [Required]
+    [StringLength(255)]
+    public string DrivingLicense { get; set; }
+    ```
+2. Add migration, since a domain model was modified:
+    `add-migration AddDriverLicenseToApplicationUser`
+3. Update databse
+    `Update-Database`
+4. Update View Model to include new property:
+    ```
+    [Required]
+    public string DrivingLicense { get; set; }
+    ```
+5. Add new property to form view:
+    ```
+    <div class="form-group">
+        @Html.LabelFor(m => m.DrivingLicense, "Driving License", new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.DrivingLicense, new { @class = "form-control" })
+        </div>
+    </div>
+    ```
+6. Ensure domain object includes new property:
+    ```
+    var user = new ApplicationUser
+                    {
+                        UserName = model.Email,
+                        Email = model.Email,
+                        DrivingLicense = model.DrivingLicense
+                    };
+    ```
+
+### OAuth
+- Open Authorization
