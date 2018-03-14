@@ -101,7 +101,7 @@
 |List| Since in object oriented design you want to depend on abstractions instead of implementations, you should never have a member of your own implementations with the concrete type List/List. |
 
 ### Examples
-**A request to /customers/delete/1 by convention is handled by**
+**A request to /customers/delete/1 by convention is handled by:**  
     `CustomersController.Delete(int id)`
 
 ### Conventions
@@ -116,7 +116,7 @@
 - `Navigation Properties` allow for navigating between / linking multiple model types and objects together
 
 
-##Course Layout
+### Course Layout
 - ASP.NET MVC Fundamentals
 - Entity Framework (Code-first)
 - Forms
@@ -363,8 +363,8 @@ routes.MapRoute(
 - `Html.HiddenFor`
 - `Html.Hidden`
 - `Html.ValidationMessageFor`
-- `@Html.ValidationSummary()`
-- `@Html.AntiForgeryToken()`
+- `Html.ValidationSummary()`
+- `Html.AntiForgeryToken()`
 
 ### Form Dropdowns
 ```
@@ -459,7 +459,7 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
     ```
 
 ### Validation Summary
-- `@Html.ValidationSummary()`
+- `Html.ValidationSummary()`
 - Displays summary of validation errors
 
 ### Client-side Validation
@@ -480,11 +480,11 @@ customerInDb.IsSubscribedToNewsletter = customer.IsSubscribedToNewsletter;
 - Cross-site Request Forgery
 - Forged request to different web domain on behalf of user
 
-`@Html.AntiForgeryToken()`
+`Html.AntiForgeryToken()`
 - Creates a token stored in form and user cookies (encrypted) and compares the two when `POST` request is made
 - Means user must be on form page to access hidden token field
 
-- Add `[ValidateAntiForgeryToken]` attribute to `action` along with `@Html.AntiForgeryToken()` in views
+- Add `[ValidateAntiForgeryToken]` attribute to `action` along with `Html.AntiForgeryToken()` in views
 
 ##  *Section 6:* Building RESTful Services with ASP.NET Web API
 - `Razor Engine` generates markup on server-side and sends markup to client
@@ -718,10 +718,11 @@ public ActionResult Index()
     ```
 
 - Apply `[Authorize(Roles = "ROLE NAME")]` to actions to override `global` filters and remedy security holes
-
+- Apply `filters.Add(new AuthorizeAttribute());` to `FilterConfig.cs` to declaratively require authorization globally
 
 ### User Filter Data Annotations
 - `[Authorized]`
+- `[Authorize]`
 - `[Authorize(Roles = "ROLE NAME")]`
 - `[AllowAnonymous]`
 
@@ -762,3 +763,21 @@ public ActionResult Index()
 
 ### OAuth
 - Open Authorization
+
+**Under the Hood**  
+[App] -- {key, secret} --> [Google OAuth]  
+[App] <-- {authorization token} -- [Google OAuth]  
+[App] -- {token, key, secret} --> [Google OAuth]   
+[App] <-- {access token} -- [Google OAuth]  
+
+### Using Social Logins
+- Enable SSL (for secure communication)
+- Register App with OAuth Service (Google, Facebook, LinkedIn, Twitter, etc...)
+
+1. Enable `SSL` within project
+    - Project Properties -> SSL Enabled = True
+    - Properties -> Web -> Project Url = [SSL URL]
+2. Add `filters.Add(new RequireHttpsAttribute());` to `FilterConfig`
+    - Requires HTTPS connections
+3. Register app with external Authentication provider to get a key/secret
+4. In `App_Start/Startup.Auth.cs`, remove comment for the corresponding providers and add key/secret
