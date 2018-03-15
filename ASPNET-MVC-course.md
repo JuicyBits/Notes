@@ -4,25 +4,25 @@
 - Widely adopted as an architecture for web applications
 - Better separation of concerns
 
-**Model**
+**Model**  
 - Application data and behavior in terms of its problem domain
 - Independent of the UI
 - A class that includes the application data and rules
 - Independent of persistence (can be stored in any databases)
 
-**View**
+**View**  
 - HTML markup displayed to users
 
-**Controller**
+**Controller**  
 - Responsible for handling HTTP requests
 
-**Router**
+**Router**  
 - Selects the right controller to handle the request
 
-**Action**
+**Action**  
 - A method in a controller responsible for handling a request
 
-**NuGet**
+**NuGet**  
 - A package manager similar to `NPM` and `Bower`
 - Used to manage dependencies of app
 - Used to upgrade existing dependencies when newer versions are available
@@ -781,3 +781,99 @@ public ActionResult Index()
     - Requires HTTPS connections
 3. Register app with external Authentication provider to get a key/secret
 4. In `App_Start/Startup.Auth.cs`, remove comment for the corresponding providers and add key/secret
+
+##  *Section 9:* Authentication and Authorization
+> Premature optimization is the root of all evils   
+~ Donald Knuth
+
+- Optimize only when necessary
+- Otherwise, development and maintenance costs increase with little to no benefit
+
+### Three-tier Architecture
+**Data**   
+- SQL Server
+
+**Application**  
+- IIS
+
+**Client**  
+- Browser
+
+- Usually, performance optimization has the greatest observable gain on the `Data Tier`
+
+### Mosh's Optimization Rules
+- Do not sacrifice maintainability of code to premature optimization
+- Be realistic and think like an "engineer"
+- Be pragmatic and ensure your efforts have observable results and give value
+
+### Data Tier
+- Schema and Queries
+
+#### Schema Issues  
+- Include Primary Keys
+- Foreign Keys / Relationships
+- Index columns that are used for filtering records in queries
+- Avoid EAV Pattern
+    - EAV - Entity Attribute Value
+    - No O/RMs
+    - Long, tedious queries (must be written manually since no O/RMs)
+    - Very slow
+
+#### Optimizing Queries  
+- Use Execution Plan in SQL Server
+- Create a "read" database (`CQRS`)
+    - A separate DB optimized for reading data
+- Use caching
+    - Run query and store results in memory
+
+### Glimpse
+- `install-package glimpse.mvc5`
+- `install-package glimpse.ef6`
+- Adds `/glimpse.axd` endpoint to application
+- Only accessible locally
+- Used to monitor activity on web application
+    - SQL Queries executed
+    - AJAX requests made
+    - ...
+
+- Avoid **Lazy Loading** when possible
+    - Opposite of **Eager Loading**
+    - Done by adding `virtual` to model properties:
+        `public virtual  MembershipType MembershipType { get; set; }`
+    - Loads object only if one or more navigation properties of an object are touched
+    - Should be avoided, as data sent to client should be known ahead of time
+    - Lazy loading sends multiple round-trips to DB
+    - Causes `N + 1` issue
+
+### Output Cache
+- Used for caching HTML
+- Add `[OutputCache]` action filter above action or controller:
+```
+[OutputCache(Duration = 50, Location = OutputCacheLocation.Server, VaryByParam = "genre")]
+    public ActionResult Index()
+    {
+        return View();
+    }
+```
+- Caches the view served by the `Index` action for 50 seconds
+- Caches on the server, not client
+- Stores separate cache based on action parameter (in this case, the query string `genre`)
+
+#### Downside of Caching
+- May display 'stale' data to customers
+- `[OutputCache(Duration = 0, VaryByParam = "*", NoStore = true)]`
+    - Disables caching rendered HTML on a given action     
+
+### Data Caching
+- Should be limited to actions that are responsible for *displaying* data, *not modifying* it
+
+```
+if (MemoryCache.Default["Genres"] == null)
+{
+   MemoryCache.Default["Genres"] = _context.Genres.ToList();
+}     
+var genres = MemoryCache.Default["Genres"] as IEnumerable<Genre>;
+```
+- Avoid caching until significant performance profiling has been performed
+    - Increases memory consumption of application
+    - Increases complexity at architectural and code level
