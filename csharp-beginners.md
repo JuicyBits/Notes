@@ -323,3 +323,13 @@ var timeSpan = TimeSpan.FromHours(1);
 ![Format Strings](https://i.imgur.com/uuBAtdg.png)
 
 ## String Builder
+`var builder = new StringBuilder();`
+- Defined in `System.Text`
+- A mutable string
+- Easy and fast to create and manipulate strings
+- **NOT** for searching
+
+## Procedural Programming
+- A programming paradigm based on procedure calls
+
+## Debugging

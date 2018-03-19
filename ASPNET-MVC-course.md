@@ -40,7 +40,8 @@
 - `F9` -> Add breakpoint
 - `F5` -> Start with debugging
 - `Shift + F5` -> Quit debugging
-
+- `Ctrl + w` -> Select code block
+- `Ctrl + Shift + w` -> Deselect code block
 ### Snippets
 - `prop` -> `public TYPE Type { get; set; }`
 - `ctor` -> create constructor
