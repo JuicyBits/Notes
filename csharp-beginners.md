@@ -333,3 +333,11 @@ var timeSpan = TimeSpan.FromHours(1);
 - A programming paradigm based on procedure calls
 
 ## Debugging
+- `F5` -> Run in debug mode
+- `F9` to add breakpoints
+- `F10` to step over
+- `F11` to step in
+
+## Defensive Programming
+- `throw new ArgumentOutOfRangeException([parameter], [custom error message])`
+- `throw new ArgumentNullException`
