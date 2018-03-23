@@ -42,6 +42,7 @@
 - `Shift + F5` -> Quit debugging
 - `Ctrl + w` -> Select code block
 - `Ctrl + Shift + w` -> Deselect code block
+
 ### Snippets
 - `prop` -> `public TYPE Type { get; set; }`
 - `ctor` -> create constructor
@@ -115,7 +116,6 @@
 - ASP.NET uses `bootstrap` by default as its front end framework
 - Use `bootswatch.com` for bootstrap templates
 - `Navigation Properties` allow for navigating between / linking multiple model types and objects together
-
 
 ### Course Layout
 - ASP.NET MVC Fundamentals
@@ -878,3 +878,37 @@ var genres = MemoryCache.Default["Genres"] as IEnumerable<Genre>;
 - Avoid caching until significant performance profiling has been performed
     - Increases memory consumption of application
     - Increases complexity at architectural and code level
+
+### Async
+- Async does *not* necessarily improve the performance of an application
+  - Using `async` functions frees the thread to process new requests, but does not modify the time necessary for the initial request
+- Provides better scalability, not performance
+  - (when used with SQL Cluster, NoSQL, SQL Azure vs a single instance of SQL Server)
+
+#### Non-Async:
+![Imgur](https://i.imgur.com/JII8BuN.png)
+
+#### Async:
+![Imgur](https://i.imgur.com/p86vjwN.png)
+
+### Release Builds
+- Switch to release build mode to compile application quicker for deployment
+  - Slightly smaller / faster assemblies
+
+### Disabling Session
+- **Session** - A piece of memory in the web server allocated to each user
+- More users, more memory required on web server
+- Kills scalability
+- Scalable web apps should be stateless
+
+### Client Tier
+#### Optimization
+- DTO
+- JS
+- CSS
+- Image
+
+##  *Section 10:* Building a Feature End-to-End Systematically
+- Gather Use Case from Client
+- Determine Inputs / Outputs
+- Implement in Front End and Back End
