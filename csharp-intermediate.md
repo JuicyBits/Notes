@@ -301,3 +301,118 @@ public class Circle : Shape
   }
 }
 ```
+
+## Abstract Classes and Members
+### Abstract Modifier
+- Indicates that a class or member is missing implementation
+
+```
+public abstract class Shape
+{
+  public abstract void Draw();
+}
+
+public class Circle : Shape
+{
+  public override void Draw()
+  {
+    // Implementation for Circle
+  }
+}
+```
+
+### Abstract Members
+- Classes with `abstract` members must also be declared as `abstract`
+- Do not include implementation
+- Must implement all abstract members from base abstract class
+
+### Why use abstract?
+- When you want to provide some common behavior while forcing other developers to follow your design
+
+## Sealed Classes and Members
+- Opposite of abstract classes
+- Prevents derivation of classes or overriding methods
+- (rarely used)
+
+### Why?
+- Slightly faster because of some run-time optimization
+
+## Interfaces
+- A language construct similar to a class (syntactically) but is fundamentally different
+- No access modifiers
+- Think of an interface as a **contract** whose methods and properties must be implemented
+
+```
+public interface ITaxCalculator
+{
+  int Calculate();
+}
+
+public class TaxCalculator : ITaxCalculator
+{
+  public int Calculate(order){
+    ...
+  }
+}
+```
+  - Read as _TaxCalculator implements ITaxCalculator_
+  - _Not_ the same as inheritance
+
+### Why?
+- To build loosely-coupled applications
+- Improve extensibility and testability of applications
+- Promote loose-coupling between concrete classes that are dependent (inherit) another
+
+## Interfaces and Testability
+- When unit testing classes, if that class has dependencies on other concrete classes, you can use an interface to reduce that coupling
+
+`METHODNAME_CONDITION_EXPECTATION`
+- Pattern for naming test methods
+
+## Interfaces and Extensibility
+- **THEORY** - Extensibility allows for changing behavior of existing classes without changing said classes -- create new classes that implement desired behavior, that are referred to in concrete class
+
+```
+ public class ConsoleLogger : ILogger
+    {
+        public void logError(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        public void LogInfo(string message)
+        {
+            Console.WriteLine(message);
+        }
+  }
+
+ public class DbMigrator
+    {
+        private readonly ILogger _logger;
+
+        public DbMigrator(ILogger logger)
+        {
+            _logger = logger;
+        }
+
+        public void Migrate()
+        {
+            _logger.LogInfo("Migrating started at " + DateTime.Now);
+
+            // ... details of migrating database
+
+            _logger.LogInfo("Migrating finished at " + DateTime.Now);
+        }
+    }
+```
+
+### Open Close Principle (OCP)
+- Software applications should be open for extensibility but closed for modification
+
+### DRY Principle
+- Don't Repeat Yourself
+
+## Interfaces are NOT for Multiple Inheritance
+- Classes can _implement_ multiple interfaces, not _inherit_ them
+
+## Interfaces and Polymorphism
