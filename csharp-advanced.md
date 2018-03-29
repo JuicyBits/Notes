@@ -147,3 +147,180 @@ public class MailService
   }
 }
 ```
+
+##  Extension Methods
+- Allow for adding methods to an existing class without:
+  - Changing its source code
+  - Creating a new class that inherits from it
+
+```
+public static class StringExtensions
+{
+  public static string Shorten(this String str, int numberOfWords)
+  {
+
+  }
+}
+```
+```
+var str = "This is an exceptionally long string ripe with meandering prose, ultimately signifying nothing";
+            var shortened = str.Shorten(5);
+```
+
+## LINQ
+- **L** anguage **In** tegrated **Q** uery
+- Grants capability to query objects natively
+- Can query...
+  - Objects in memory (_LINQ to Objects_)
+  - Databases (_LINQ to entities_)
+  - XML (_LINQ to XML_)
+  - ADO.NET Data Sets (_LINQ to Data Sets_)
+
+### LINQ Extension Methods
+- `Select()`
+- `Where()`
+- `Take()` // used for pagination
+- `Skip()` // used for  pagination
+- `OrderBy()`
+- `Single()`
+- `SingleOrDefault()`
+- `First()`
+- `FirstOrDefault()`
+- `Last()`
+- `LastOrDefault()`
+- `Count()`
+- `Max()`
+- `Min()`
+- `Sum()`
+
+```
+var cheapBooks = books
+                        .Where(b => b.Price < 10)
+                        .OrderBy(b => b.Title)
+                        .Select(b => b.Title);
+```
+
+### LINQ Query Operators
+```
+var cheapBooks =
+    from b in books
+    where b.Price < 10
+    orderby b.Title
+    select b.Title;
+```
+
+## Nullable Types
+- Value types cannot be null
+- `DateTime? date = null;`
+
+### Null Coalescing Operator
+- `DateTime date2 = date ?? DateTime.Today;`
+  - If date is null, set date2 to today
+  - Else, set date2 to date
+
+## Dynamic
+- Static Languages: _C#, Java_
+  - Interpreted at compile-time
+- Dynamic Languages: _Ruby, Javascript, Python_
+  - Interpreted at runtime
+
+```
+dynamic name = "Miller";
+name = 10;
+```
+- **Dynamics** allow for implicit conversion and casting to target variable
+
+## Exception Handling
+- **Stack Trace** - Sequence of methods called until exception is thrown
+- In .NET namespace, an exception is essentially a class
+- Nest catch blocks from most specific to most generic:
+  ```
+  try
+  {
+    var calculator = new Calculator();
+    var result = calculator.Divide(5, 0);
+  }
+  catch (DivideByZeroException ex)
+  {
+    ...
+  }
+  catch (ArithmeticException ex)
+  {
+    ...
+  }
+  catch (Exception ex)
+  {
+    ...
+  }
+  ```
+
+### Finally
+- Use a `finally` block to handle resources that are not managed by the **CLR** (aka, _On Manage Resources_)
+  - E.G. Database connections, streamReaders
+  ```
+  finally
+  {
+    streamReader.Dispose();
+  }
+  ```
+  - Can be done with the `using` statement:
+  ```
+  try
+  {
+    using (var streamReader = new StreamReader(@"c:\file.zip"))
+    {
+      var content = streamReader.ReadToEnd();
+    }
+  }
+  ```
+    - Automatically invokes `finally` as soon as using block ends
+
+### Custom Exception Handling
+```
+public class YoutubeException : Exception
+{
+  public YoutubeException(string message, Exception innerException)
+    : base(message, innerException)
+  {
+  }
+}
+```
+
+## Asynchronous Programming
+### Synchronous Program Execution
+- Program is executed line by line, one at a time
+- When a function is called, program execution has to wait until the function returns
+
+### Async Program Execution
+- When a function is called, program execution continues to the next line _without_ waiting for the function to complete
+
+### When to use Async?
+- Accessing the web
+- Working with files and Databases
+- Working with images
+
+```
+// ASYNCHRONOUS
+public async Task DownloadHtmlAsync(string url)
+{
+    var webClient = new WebClient();
+    var html = await webClient.DownloadStringTaskAsync(url);
+
+    using (var streamWriter = new StreamWriter(@"c:\projects\result.html"))
+    {
+      await streamWriter.WriteAsync(html);
+    }
+}
+
+// SYNCHRONOUS
+public void DownloadHtml(string url)
+{
+  var webClient = new WebClient();
+  var html = webClient.DownloadStringTask(url);
+
+  using (var streamWriter = new StreamWriter(@"c:\projects\result.html"))
+  {
+    streamWriter.Write(html);
+  }
+}
+```
