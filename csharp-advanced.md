@@ -1,3 +1,4 @@
+# C# Advanced Course
 ## Generics
 - Allows for code reusability without performance penalties brought on by casting object types
 - Most likely, you will use existing generics, _not_ creating them
@@ -324,3 +325,7 @@ public void DownloadHtml(string url)
   }
 }
 ```
+
+### Await
+- Signifies that the rest of an async method or lambda cannot continue execution until await operation is completed
+- Immediately  passes control back to outer context
