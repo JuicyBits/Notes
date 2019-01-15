@@ -277,7 +277,7 @@ var random = new Random();
 - `Array.IndexOf()`
 - `Array.Clear()`
 - `Array.Copy()`
-- `Array.sort()`
+- `Array.Sort()`
 - `Array.Reverse()`
 
 ## Lists
